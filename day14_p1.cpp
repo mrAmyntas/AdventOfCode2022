@@ -203,18 +203,18 @@ int dropSand(std::vector<point> & grid)
 	while (y < y_max)
 	{
 		next = where_next(x, y, grid);
-		if (next == -1)
+		if (next == -1) //landed
 		{
 			x = (*it).x;
 			y = (*it).y;
 			i++;
 			continue ;
 		}
-		if (next == 1)
+		if (next == 1) //left
 			x--;
-		else if (next == 2)
+		else if (next == 2)//right
 			x++;
-		y++;
+		y++; //down
 	}
 	return i;
 
