@@ -5,10 +5,19 @@
 
 //ran it first with only setRocks to find the min and max values of the rocks
 
+//real input
+
 int y_min = 0;
 int y_max = 170;
 int x_min = 445;
 int x_max = 517;
+
+//test input
+
+// int y_min = 0;
+// int y_max = 9;
+// int x_min = 493;
+// int x_max = 504;
 
 struct point {
 	int x;
@@ -159,46 +168,14 @@ void	fillAir( std::vector<point>	& grid )
 	}
 }
 
-// bool down_is_air(int x, int y, std::vector<point> & grid)
-// {
-// 	for (std::vector<point>::iterator it = grid.begin(); it != grid.end(); it++){
-// 		if ((*it).x == x &&  (*it).y == y + 1 && (*it).type == '.')
-// 			return true;
-// 	}
-// 	return false;
-// }
-
-// bool left_down_is_air(int x, int y, std::vector<point> & grid)
-// {
-// 	for (std::vector<point>::iterator it = grid.begin(); it != grid.end(); it++){
-// 		if ((*it).x == x - 1 &&  (*it).y == y + 1 && (*it).type == '.')
-// 			return true;
-// 	}
-// 	return false;
-// }
-
-// bool right_down_is_air(int x, int y, std::vector<point> & grid)
-// {
-// 	for (std::vector<point>::iterator it = grid.begin(); it != grid.end(); it++){
-// 		if ((*it).x == x + 1 &&  (*it).y == y + 1 && (*it).type == '.')
-// 			return true;
-// 	}
-// 	return false;
-// }
-
-void sand_rests(int x, int y, std::vector<point> & grid)
-{
-	for (std::vector<point>::iterator it = grid.begin(); it != grid.end(); it++){
-		if ((*it).x == x  &&  (*it).y == y)
-			(*it).type = 'o';
-	}
-}
-
 int where_next(int x, int y, std::vector<point> & grid)
 {
+	std::vector<point>::iterator	it, it2;
 	int ret[2] = {0, 0};
 
-	for (std::vector<point>::iterator it = grid.begin(); it != grid.end(); it++){
+	for (it = grid.begin(); it != grid.end(); it++){
+		if ((*it).x == x && (*it).y == y)
+			it2 = it;
 		if ((*it).x == x &&  (*it).y == y + 1 && (*it).type == '.')
 			return 0; //down
 		if ((*it).x == x - 1 &&  (*it).y == y + 1 && (*it).type == '.')
@@ -210,24 +187,24 @@ int where_next(int x, int y, std::vector<point> & grid)
 		return 1; //down left
 	if (ret[1] == 1)
 		return 2; //down right
-	return -1; //stuck
+	(*it2).type = 'o';
+	return -1; //landed
 }
 
 
 int dropSand(std::vector<point> & grid)
 {
 	std::vector<point>::iterator it = grid.begin(); //start is first!
-	int x, y, i = 0;
+	int x, y, i = 0, next;
 
 	x = (*it).x;
 	y = (*it).y;
 	//try loop
 	while (y < y_max)
 	{
-		int next = where_next(x, y, grid);
+		next = where_next(x, y, grid);
 		if (next == -1)
 		{
-			sand_rests(x, y, grid);
 			x = (*it).x;
 			y = (*it).y;
 			i++;
@@ -245,7 +222,7 @@ int dropSand(std::vector<point> & grid)
 
 int main (void)	
 {
-	std::ifstream			ifs("tinput");
+	std::ifstream			ifs("input");
 	std::string				line;
 	std::vector<point>		grid;
 	int						sand_count = 0;
@@ -259,7 +236,7 @@ int main (void)
 		setRocks(line, grid);
 	}
 	fillAir(grid);
-	printGrid(grid);
+	// printGrid(grid);
 	sand_count = dropSand(grid);
 	std::cout << sand_count << std::endl;
 	return 0;
