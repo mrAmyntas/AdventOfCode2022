@@ -34,49 +34,58 @@ struct interval {
 	}
 };
 
-void	solve( int i, sensor S, std::vector<interval> & intervals )
+void	solve( int i, std::vector<sensor> & sensors, std::vector<interval> & intervals )
 {
-	int dist_to_row, x_len;
+	std::vector<sensor>::iterator 	s_it;
+	std::vector<interval>::iterator it;
+	int 							n = 0, dist_to_row, x_len;
 
-	if ( i < S.S.y - S.dist || i > S.S.y + S.dist)
-		return ;
-	dist_to_row = abs(S.S.y - i);
-	x_len = S.dist - dist_to_row;
-	int min = S.S.x - x_len;
-	int max = S.S.x + x_len;
-	if (min < 0)
-		min = 0;
-	if (min > maxim)
-		return ;
-	if (max > maxim)
-		max = maxim;
-	if (max < 0)
-		return ;
-	interval new_interval(min, max);
-	for (std::vector<interval>::iterator it = intervals.begin(); it != intervals.end(); it++) {
-		if ( (*it).min -1 > new_interval.max || (*it).max + 1 < new_interval.min) //no overlap or next to eachother
+	for (s_it = sensors.begin(); s_it != sensors.end(); s_it++) {
+		if ( i < (*s_it).S.y - (*s_it).dist || i > (*s_it).S.y + (*s_it).dist)
 			continue ;
-		if ( (*it).min <= new_interval.min && (*it).max >= new_interval.max )	//old interval completely covers new
-			return ;
-		if ( (*it).min >= new_interval.min && (*it).max <= new_interval.max) 	//new interval completely covers old
-		{
-			intervals.erase(it);
-			it--;
+		dist_to_row = abs((*s_it).S.y - i);
+		x_len = (*s_it).dist - dist_to_row;
+		int min = (*s_it).S.x - x_len;
+		int max = (*s_it).S.x + x_len;
+		if (min < 0)
+			min = 0;
+		if (min > maxim)
+			continue ;
+		if (max > maxim)
+			max = maxim;
+		if (max < 0)
+			continue ;
+		interval new_interval(min, max);
+		n = 0;
+		for ( it = intervals.begin(); it != intervals.end(); it++) {
+			if ( (*it).min -1 > new_interval.max || (*it).max + 1 < new_interval.min) //no overlap or next to eachother
+				continue ;
+			if ( (*it).min <= new_interval.min && (*it).max >= new_interval.max )	//old interval completely covers new
+			{
+				n = 1;
+				break ;
+			}
+			if ( (*it).min >= new_interval.min && (*it).max <= new_interval.max) 	//new interval completely covers old
+			{
+				intervals.erase(it);
+				it--;
+			}
+			else if ( (*it).min >= new_interval.min || (*it).min - 1 == new_interval.max) 	//new interval covers left side of old or is right next to it
+			{
+				new_interval.max = (*it).max;
+				intervals.erase(it);
+				it--;
+			}
+			else if ((*it).max <= new_interval.max || (*it).max + 1 == new_interval.min) //right side
+			{		
+				new_interval.min = (*it).min;
+				intervals.erase(it);
+				it--;
+			}
 		}
-		else if ( (*it).min >= new_interval.min || (*it).min - 1 == new_interval.max) 	//new interval covers left side of old or is right next to it
-		{
-			new_interval.max = (*it).max;
-			intervals.erase(it);
-			it--;
-		}
-		else if ((*it).max <= new_interval.max || (*it).max + 1 == new_interval.min) //right side
-		{		
-			new_interval.min = (*it).min;
-			intervals.erase(it);
-			it--;
-		}
+		if (n == 0)
+			intervals.push_back(new_interval);
 	}
-	intervals.push_back(new_interval);
 }
 
 sensor parse(std::string & line)
@@ -104,36 +113,35 @@ int main(void)
 	std::string									line;
 	int											i = 0;
 	std::vector<std::vector<interval> >			interval_v;
+	std::vector<sensor>							sensors;
 	unsigned long long int						result;
 
+	//get sensors
+	std::getline(ifs, line);
+	for (; !ifs.eof(); std::getline(ifs, line)) {
+			sensors.push_back(parse(line));
+	}
+
+	//go through all lines until a gap is found
 	interval_v.resize(maxim);
 	std::vector<std::vector<interval> >::iterator it = interval_v.begin();
 	while (it != interval_v.end())
 	{
-		std::getline(ifs, line);
-		for (; !ifs.eof(); std::getline(ifs, line)) {
-			sensor s = parse(line);
-			solve(i, s, *it);
-		}
+		solve(i, sensors, *it);
 		if ((*it).size() > 1)
-		{
-			if ((*it).front().min < (*it).back().min)
-			{
-				result = (*it).front().max + 1;
-				result = result * 4000000 + i;
-				break ;
-			}
-			else
-			{
-				result = (*it).back().max + 1;
-				result = result * 4000000 + i;
-				break ;
-			}
-		}
+			break ;
 		it++;
 		i++;
-		ifs.clear();
-		ifs.seekg(0);
+	}
+	if ((*it).front().min < (*it).back().min)
+	{
+		result = (*it).front().max + 1;
+		result = result * 4000000 + i;
+	}
+	else
+	{
+		result = (*it).back().max + 1;
+		result = result * 4000000 + i;
 	}
 	std::cout << result << std::endl;
 	return 0;
