@@ -197,8 +197,7 @@ int main(void)
 	solve_p1(m3dgrid);
 	fill_grid_with_air(m3dgrid);
 	m3dgrid.begin()->second = 's';
-	let_there_be_steam(m3dgrid, std::array<int, 3>({-1,-1,-1}));
+	let_there_be_steam(m3dgrid, m3dgrid.begin()->first);
 	solve_p2(m3dgrid);
-
 	return 0;
 }
