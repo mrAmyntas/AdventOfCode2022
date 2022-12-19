@@ -52,7 +52,7 @@ void parse(std::string line, std::array<Blueprint, 30> & bprints, int i)
 
 int	solve(Blueprint bprint, int start_ore, int start_clay, int start_obsidian, int start_geode, int time, int n_ore_robots, int n_clay_robots, int n_obs_robots, int n_geo_robots, int make_robot)
 {
-	//recursively check all posibilities with some pruning (based on intuition I guess)
+	//recursively check all posibilities with some pruning
 	//if I can make a geode bot I do that and nothing else.
 	//if I can make a obsidian bot I either make it or wait, not try a clay or ore robot,
 	//because in the input it is clear that the obsidian requirement for making a geode bot
