@@ -123,10 +123,10 @@ int	solve(Blueprint bprint, int start_ore, int start_clay, int start_obsidian, i
 
 int main(void)
 {
-	std::ifstream					ifs("input"); //pruned all the text from input, is just digits seperated by spaces now
-	std::string						line;
-	std::array<Blueprint, 30>		bprints;
-	int								quality = 0, geodes, result = 1, n_bprint;
+	std::ifstream				ifs("input"); //pruned all the text from input, is just digits seperated by spaces now
+	std::string					line;
+	std::array<Blueprint, 30>	bprints;
+	int							quality = 0, geodes, result = 1, n_bprint;
 
 	int i = 0;
 	for (std::getline(ifs, line); !ifs.eof(); std::getline(ifs, line), ++i) {
