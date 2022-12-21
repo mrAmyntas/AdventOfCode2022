@@ -42,7 +42,6 @@ void solve(std::map<std::string, long> & monkeys, std::vector<operation> & opera
 	long	n;
 
 	for ( it = operations.begin(); it != operations.end(); ) {
-		// std::cout << "left:" << (*it).left << "  r:" << (*it).right << std::endl;
 		left = monkeys.find((*it).left);
 		right = monkeys.find((*it).right);
 		if (left != monkeys.end() && right != monkeys.end())
@@ -84,5 +83,3 @@ int main(void)
 	}
 	std::cout << "p1:" << (*it).second << std::endl;
 }
-
-//152 too low
