@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <vector>
 #include <algorithm>
-
+ 
 int main (void)
 {
 	int value = 0;
